@@ -10,9 +10,9 @@ void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
 {
     for(int i = 0; i < 10; i++)
     {
-    // print i
-    printf("coroutine : %d\n",i);
-    CoYield(scheduler,handle,1);//yield
+        // print i
+        printf("coroutine : %d\n",i);
+        CoYield(scheduler,handle,1);//yield
     }
 }
 
