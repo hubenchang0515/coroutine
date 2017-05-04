@@ -112,3 +112,32 @@ int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
  */
 CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func);
 ```
+
+# How to use
+* Create a scheduler by CoCreateScheduler , it's parameter is the max quantity of coroutine , it will return a scheduler(NULL means failed). For example:
+```
+Scheduler_t* scheduler = CoCreateScheduler(10);
+```
+
+* Define your coroutine functions , the return value must be void , and parameters must be Scheduler_t* and CoHandle_t. as this:
+```
+void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
+{
+    for(int i = 0; i < 10; i++)
+    {
+        printf("coroutine\n",);
+        CoYield(scheduler,handle,1);
+    }
+}
+```
+
+* Create coroutines by CoCreate, it's parameters are Scheduler_t* and a coroutine function , it will return the handle of coroutine(-1 means failed). For Example:
+```
+CoHandle_t handle = CoCreate(scheduler,coroutine);
+```
+
+* Use CoResume and CoYield to resume and yield coroutines, their parameters are Scheduler_t* scheduler , CoHandle_t handle and a integer.  
+  - the 3rd parameter of CoResume will be the return value of previous CoYield.  
+  - the 3rd parameter of CoYield will be the return value of previous CoResume.  
+  - the 3rd parameter should be bigger than 0 , but if 3rd parameter is 0 , previous CoResume or CoYield will return 1.
+  - if CoResume 0 that means coroutine has terminated.
