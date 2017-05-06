@@ -49,7 +49,7 @@ coroutine : hello 9
  *
  * parameters	: listLength - max quantity of coroutinr in this scheduler
  *
- * return		: a pointer of Scheduler_t , NULL means failed
+ * return       : a pointer of Scheduler_t , NULL means failed
  */
 Scheduler_t* CoCreateScheduler(size_t listLength);
 
@@ -63,7 +63,7 @@ Scheduler_t* CoCreateScheduler(size_t listLength);
  *
  * parameters	: scheduler - scheduler to delete
  *
- * return 		: void
+ * return       : void
  */
 void CoDeleteScheduler(Scheduler_t* scheduler);
 
@@ -75,11 +75,11 @@ void CoDeleteScheduler(Scheduler_t* scheduler);
  * description 	: resume a coroutine
  *
  * parameters	: scheduler 	- scheduler of coroutine
- *				  handle 		- handle of coroutine
- *				  yield_rvalue	- will be the return value of previous CoYield invocation
- *                              - if yield_rvalue is 0 ,  CoYield will return 1
+ *                handle        - handle of coroutine
+ *                yield_rvalue   - will be the return value of previous CoYield invocation
+ *                                if yield_rvalue is 0 ,  CoYield will return 1
  *
- * return 		: 3rd parameter of next CoYield invocation , 0 means failed
+ * return       : 3rd parameter of next CoYield invocation , 0 means failed
  */
 int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
 
@@ -91,11 +91,11 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
  * description 	: yield a coroutine
  *
  * parameters	: scheduler 	- scheduler of coroutine
- *				  handle 		- handle of coroutine
- *				  resume_rvalue	- will be the return value of previous CoResume invocation
+ *                handle        - handle of coroutine
+ *                resume_rvalue - will be the return value of previous CoResume invocation
  *                              - if resume_rvalue is 0 , CoResume  will return 1
  *
- * return 		: 3rd parameter of next CoResume invocation
+ * return       : 3rd parameter of next CoResume invocation
  */
 int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
 
@@ -107,10 +107,10 @@ int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
  * description 	: Create a coroutine
  *
  * parameters	: scheduler - scheduler of coroutine
- *				  func 		- function of coroutine
- *              : param     - parameter of coroutine function
+ *                func      - function of coroutine
+ *                param     - parameter of coroutine function
  *
- * return		: a handle of coroutine , -1 means failed
+ * return       : a handle of coroutine , -1 means failed
  */
 CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func,void* param);
 
