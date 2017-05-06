@@ -30,7 +30,7 @@ typedef struct Scheduler Scheduler_t;
 typedef size_t CoHandle_t;
 
 // coroutine funcrions pointer
-typedef void (*CoFunc)(Scheduler_t*,CoHandle_t);
+typedef void (*CoFunc)(Scheduler_t*,CoHandle_t,void*);
 
 
 /* states of coroutine
@@ -50,6 +50,7 @@ typedef enum CoStateEnum
 
 /* informaion of every coroutine
  * func 	: function of the coroutine
+ * param	: parameter of coroutine function
  * context 	: context of the coroutine , to resume coroutine
  * state 	: state of the coroutrine
  * stack 	: stack of the coroutine
@@ -58,6 +59,7 @@ typedef enum CoStateEnum
 typedef struct CoInfo
 {
 	CoFunc func;
+	void* param;
 	ucontext_t context;
 	CoStateEnum_t state;
 	unsigned char stack[COROUTINE_STACK_SZIE];
@@ -150,10 +152,11 @@ int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
  *
  * parameters	: scheduler - scheduler of coroutine
  *				  func 		- function of coroutine
+ *              : param     - parameter of coroutine function
  *
  * return		: a handle of coroutine , -1 means failed
  */
-CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func);
+CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func,void* param);
 
 #ifdef __cplusplus
 	}

@@ -6,38 +6,39 @@ This is a simple coroutine based on ucontext.
 #include <stdio.h>
 #include <coroutine.h>
 
-void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
+void coroutine(Scheduler_t* scheduler,CoHandle_t handle,void* param)
 {
-    for(int i = 0; i < 10; i++)
-    {
-        // print i
-        printf("coroutine : %d\n",i);
-        CoYield(scheduler,handle,1);//yield
-    }
+	for(int i = 0; i < 10; i++)
+	{
+		// print i
+		printf("coroutine : %s %d\n",(char*)param,i);
+		CoYield(scheduler,handle,1);//yield
+	}
 }
 
 int main()
 {
-    Scheduler_t* scheduler = CoCreateScheduler(10);
-    CoHandle_t handle = CoCreate(scheduler,coroutine);
-    //resume coroutine until CoResume return 0
-    while(CoResume(scheduler,handle,1));
+	Scheduler_t* scheduler = CoCreateScheduler(10);
+	CoHandle_t handle = CoCreate(scheduler,coroutine,"hello");
+	while(CoResume(scheduler,handle,1));//resume coroutine until CoResume return 0
 	
-    return 0;
+	return 0;
 }
+
 ```
 This code will print 
 ```
-coroutine : 0
-coroutine : 1
-coroutine : 2
-coroutine : 3
-coroutine : 4
-coroutine : 5
-coroutine : 6
-coroutine : 7
-coroutine : 8
-coroutine : 9
+coroutine : hello 0
+coroutine : hello 1
+coroutine : hello 2
+coroutine : hello 3
+coroutine : hello 4
+coroutine : hello 5
+coroutine : hello 6
+coroutine : hello 7
+coroutine : hello 8
+coroutine : hello 9
+
 ```
 
 # APIs
@@ -48,7 +49,7 @@ coroutine : 9
  *
  * parameters	: listLength - max quantity of coroutinr in this scheduler
  *
- * return       : a pointer of Scheduler_t , NULL means failed
+ * return		: a pointer of Scheduler_t , NULL means failed
  */
 Scheduler_t* CoCreateScheduler(size_t listLength);
 
@@ -62,7 +63,7 @@ Scheduler_t* CoCreateScheduler(size_t listLength);
  *
  * parameters	: scheduler - scheduler to delete
  *
- * return       : void
+ * return 		: void
  */
 void CoDeleteScheduler(Scheduler_t* scheduler);
 
@@ -74,11 +75,11 @@ void CoDeleteScheduler(Scheduler_t* scheduler);
  * description 	: resume a coroutine
  *
  * parameters	: scheduler 	- scheduler of coroutine
- *                handle        - handle of coroutine
- *                yield_rvalue	- will be the return value of previous CoYield invocation
+ *				  handle 		- handle of coroutine
+ *				  yield_rvalue	- will be the return value of previous CoYield invocation
  *                              - if yield_rvalue is 0 ,  CoYield will return 1
  *
- * return       : 3rd parameter of next CoYield invocation , 0 means failed
+ * return 		: 3rd parameter of next CoYield invocation , 0 means failed
  */
 int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
 
@@ -89,12 +90,12 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
  *
  * description 	: yield a coroutine
  *
- * parameters	: scheduler     - scheduler of coroutine
- *                handle        - handle of coroutine
- *                resume_rvalue	- will be the return value of previous CoResume invocation
+ * parameters	: scheduler 	- scheduler of coroutine
+ *				  handle 		- handle of coroutine
+ *				  resume_rvalue	- will be the return value of previous CoResume invocation
  *                              - if resume_rvalue is 0 , CoResume  will return 1
  *
- * return       : 3rd parameter of next CoResume invocation
+ * return 		: 3rd parameter of next CoResume invocation
  */
 int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
 
@@ -106,11 +107,13 @@ int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
  * description 	: Create a coroutine
  *
  * parameters	: scheduler - scheduler of coroutine
- *                func      - function of coroutine
+ *				  func 		- function of coroutine
+ *              : param     - parameter of coroutine function
  *
- * return       : a handle of coroutine , -1 means failed
+ * return		: a handle of coroutine , -1 means failed
  */
-CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func);
+CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func,void* param);
+
 ```
 
 # How to use
@@ -119,9 +122,9 @@ CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func);
 Scheduler_t* scheduler = CoCreateScheduler(10);
 ```
 
-* Define your coroutine functions , the return value must be void , and parameters must be Scheduler_t* and CoHandle_t. as this:
+* Define your coroutine functions , the return value must be void , and parameters must be Scheduler_t* , CoHandle_t and void*. as this:
 ```
-void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
+void coroutine(Scheduler_t* scheduler,CoHandle_t handle,voit* param)
 {
     for(int i = 0; i < 10; i++)
     {
@@ -133,7 +136,7 @@ void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
 
 * Create coroutines by CoCreate, it's parameters are Scheduler_t* and a coroutine function , it will return the handle of coroutine(-1 means failed). For Example:
 ```
-CoHandle_t handle = CoCreate(scheduler,coroutine);
+CoHandle_t handle = CoCreate(scheduler,coroutine,NULL);
 ```
 
 * Use CoResume and CoYield to resume and yield coroutines, their parameters are Scheduler_t* scheduler , CoHandle_t handle and a integer.  

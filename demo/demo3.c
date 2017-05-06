@@ -2,7 +2,7 @@
 #include <coroutine.h>
 
 
-void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
+void coroutine(Scheduler_t* scheduler,CoHandle_t handle,void* param)
 {
 	for(int i = 0; i < 10; i++)
 	{
@@ -14,7 +14,7 @@ void coroutine(Scheduler_t* scheduler,CoHandle_t handle)
 int main()
 {
 	Scheduler_t* scheduler = CoCreateScheduler(10);
-	CoHandle_t handle = CoCreate(scheduler,coroutine);
+	CoHandle_t handle = CoCreate(scheduler,coroutine,NULL);
 
 	CoResume(scheduler,handle,1); // first time 3rd parameter will be ignored
 	CoResume(scheduler,handle,2);

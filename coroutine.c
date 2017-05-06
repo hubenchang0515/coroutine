@@ -86,7 +86,8 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue)
 				scheduler->list[handle].context.uc_stack.ss_size = COROUTINE_STACK_SZIE;
 				scheduler->list[handle].context.uc_link = &scheduler->context;
 				CoFunc func = scheduler->list[handle].func;
-				makecontext(&scheduler->list[handle].context , (void(*)(void))func , 2 ,scheduler, handle);
+				void* param = scheduler->list[handle].param;
+				makecontext(&scheduler->list[handle].context , (void(*)(void))func , 3 ,scheduler, handle,param);
 				// invoke starter by scheduler and handle to start the coroutine and save current context
 				swapcontext(&scheduler->context,&scheduler->list[handle].context);
 				// if coroutine come back without CoYield , that means coroutine has terminated
@@ -109,8 +110,14 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue)
 				
 				return scheduler->list[handle].rvalue;
 
-		default: //CoState_Running and CoState_Terminated
-				return 0;// return 0 means faild
+		case CoState_Running:
+				return 0;
+
+		case CoState_Terminated:
+				return 0;
+
+		default:
+				return -1; // return -1 means exceptional
 	}
 }
 
@@ -147,14 +154,16 @@ int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue)
  *
  * parameters	: scheduler - scheduler of coroutine
  *				  func 		- function of coroutine
+ *              : param     - parameter of coroutine function
  *
  * return		: a handle of coroutine , -1 means failed
  */
-CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func)
+CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func,void* param)
 {
 	if(scheduler->length <= scheduler->maxlength)
 	{
 		scheduler->list[scheduler->length].func = func;
+		scheduler->list[scheduler->length].param = param;
 		scheduler->list[scheduler->length].state = CoState_NotStart;
 		scheduler->length++;
 		return scheduler->length-1;
