@@ -59,15 +59,6 @@ void CoDeleteScheduler(Scheduler_t* scheduler)
 }
 
 
-
-/* This function start the coroutine of scheduler and handle */
-static void starter(Scheduler_t* scheduler,CoHandle_t handle)
-{
-	scheduler->list[handle].func(scheduler,handle);
-}
-
-
-
 /* function 	: CoResume
  *
  * description 	: resume a coroutine
@@ -94,7 +85,8 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue)
 				scheduler->list[handle].context.uc_stack.ss_sp = scheduler->list[handle].stack;
 				scheduler->list[handle].context.uc_stack.ss_size = COROUTINE_STACK_SZIE;
 				scheduler->list[handle].context.uc_link = &scheduler->context;
-				makecontext(&scheduler->list[handle].context , (void(*)(void))starter , 2 ,scheduler, handle);
+				CoFunc func = scheduler->list[handle].func;
+				makecontext(&scheduler->list[handle].context , (void(*)(void))func , 2 ,scheduler, handle);
 				// invoke starter by scheduler and handle to start the coroutine and save current context
 				swapcontext(&scheduler->context,&scheduler->list[handle].context);
 				// if coroutine come back without CoYield , that means coroutine has terminated
