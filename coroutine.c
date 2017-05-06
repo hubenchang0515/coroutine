@@ -68,12 +68,14 @@ void CoDeleteScheduler(Scheduler_t* scheduler)
  *				  yield_rvalue	- will be the return value of previous CoYield invocation
  *                              - if yield_rvalue is 0 ,  CoYield will return 1
  *
- * return 		: 3rd parameter of next CoYield invocation , 0 means failed
+ * return 		: 3rd parameter of next CoYield invocation , 0 means coroutine has terminated , -1 means exception
  */
 int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue)
 {
 	// if yield_rvalue is 0 ,  CoYield will return 1
 	scheduler->list[handle].rvalue = yield_rvalue ? yield_rvalue : 1;
+	CoFunc func = scheduler->list[handle].func;
+	void* param = scheduler->list[handle].param;
 	
 	switch(scheduler->list[handle].state)
 	{
@@ -85,8 +87,6 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue)
 				scheduler->list[handle].context.uc_stack.ss_sp = scheduler->list[handle].stack;
 				scheduler->list[handle].context.uc_stack.ss_size = COROUTINE_STACK_SZIE;
 				scheduler->list[handle].context.uc_link = &scheduler->context;
-				CoFunc func = scheduler->list[handle].func;
-				void* param = scheduler->list[handle].param;
 				makecontext(&scheduler->list[handle].context , (void(*)(void))func , 3 ,scheduler, handle,param);
 				// invoke starter by scheduler and handle to start the coroutine and save current context
 				swapcontext(&scheduler->context,&scheduler->list[handle].context);

@@ -123,7 +123,7 @@ void CoDeleteScheduler(Scheduler_t* scheduler);
  *				  yield_rvalue	- will be the return value of previous CoYield invocation
  *                              - if yield_rvalue is 0 ,  CoYield will return 1
  *
- * return 		: 3rd parameter of next CoYield invocation , 0 means failed
+ * return 		: 3rd parameter of next CoYield invocation , 0 means coroutine has terminated , -1 means exception
  */
 int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
 
