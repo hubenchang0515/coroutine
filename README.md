@@ -2,7 +2,7 @@
 This is a simple coroutine based on ucontext.  
   
 # Example
-```
+```C
 #include <stdio.h>
 #include <coroutine.h>
 
@@ -42,7 +42,7 @@ coroutine : hello 9
 ```
 
 # APIs
-```
+```C
 /* function 	: CoCreateScheduler
  *
  * description 	: Create a scheduler
@@ -118,12 +118,12 @@ CoHandle_t CoCreate(Scheduler_t* scheduler,CoFunc func,void* param);
 
 # How to use
 * Create a scheduler by CoCreateScheduler , it's parameter is the max quantity of coroutine , it will return a scheduler(NULL means failed). For example:
-```
+```C
 Scheduler_t* scheduler = CoCreateScheduler(10);
 ```
 
 * Define your coroutine functions , the return value must be void , and parameters must be Scheduler_t* , CoHandle_t and void*. as this:
-```
+```C
 void coroutine(Scheduler_t* scheduler,CoHandle_t handle,voit* param)
 {
     for(int i = 0; i < 10; i++)
@@ -135,7 +135,7 @@ void coroutine(Scheduler_t* scheduler,CoHandle_t handle,voit* param)
 ```
 
 * Create coroutines by CoCreate, it's parameters are Scheduler_t* and a coroutine function , it will return the handle of coroutine(-1 means failed). For Example:
-```
+```C
 CoHandle_t handle = CoCreate(scheduler,coroutine,NULL);
 ```
 
