@@ -52,11 +52,11 @@ coroutine : hello 9
  * return       : a pointer of Scheduler_t , NULL means failed
  */
 Scheduler_t* CoCreateScheduler(size_t listLength);
+```
 
 
 
-
-
+```C
 /* function 	: CoDeleteScheduler
  *
  * description 	: Delete a scheduler
@@ -66,10 +66,10 @@ Scheduler_t* CoCreateScheduler(size_t listLength);
  * return       : void
  */
 void CoDeleteScheduler(Scheduler_t* scheduler);
+```
 
 
-
-
+```C
 /* function 	: CoResume
  *
  * description 	: resume a coroutine
@@ -82,10 +82,10 @@ void CoDeleteScheduler(Scheduler_t* scheduler);
  * return       : 3rd parameter of next CoYield invocation , 0 means cotoutine has terminated , -1 means exception
  */
 int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
+```
 
 
-
-
+```C
 /* function 	: CoYield
  *
  * description 	: yield a coroutine
@@ -98,10 +98,10 @@ int CoResume(Scheduler_t* scheduler,CoHandle_t handle,int yield_rvalue);
  * return       : 3rd parameter of next CoResume invocation
  */
 int CoYield(Scheduler_t* scheduler,CoHandle_t handle,int resume_rvalue);
+```
 
 
-
-
+```C
 /* function 	: CoCreate
  *
  * description 	: Create a coroutine
